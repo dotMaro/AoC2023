@@ -2,11 +2,11 @@ use std::fs;
 
 fn main() {
     let input_vec = fs::read("src/day01/input.txt").unwrap();
-    let input = &String::from_utf8(input_vec).unwrap();
-    println!("Part 1. {}", sum_of_calibration_values(input));
+    let input = String::from_utf8(input_vec).unwrap();
+    println!("Part 1. {}", sum_of_calibration_values(&input));
     println!(
         "Part 2. {}",
-        sum_of_calibration_values_including_written_out_digits(input)
+        sum_of_calibration_values_including_written_out_digits(&input)
     );
 }
 
