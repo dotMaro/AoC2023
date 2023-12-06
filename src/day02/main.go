@@ -13,7 +13,8 @@ func main() {
 		panic(err)
 	}
 	games := parseGames(string(inputBytes))
-	fmt.Printf("Part 1. %d", sumOfPossibleGames(games, drawnSet{drawnCubes{color: "red", count: 12}, drawnCubes{color: "green", count: 13}, drawnCubes{color: "blue", count: 14}}))
+	fmt.Printf("Part 1. %d\n", sumOfPossibleGames(games, drawnSet{drawnCubes{color: "red", count: 12}, drawnCubes{color: "green", count: 13}, drawnCubes{color: "blue", count: 14}}))
+	fmt.Printf("Part 2. %d\n", sumOfPower(games))
 }
 
 func parseGames(s string) []game {
@@ -59,12 +60,37 @@ type game struct {
 	drawnSets []drawnSet
 }
 
+func (g game) powerOfFewestPossibleCubes() int {
+	max := make(map[string]int, 0)
+	for _, s := range g.drawnSets {
+		for _, c := range s {
+			curMax, ok := max[c.color]
+			if !ok || c.count > curMax {
+				max[c.color] = c.count
+			}
+		}
+	}
+	power := 1
+	for _, count := range max {
+		power *= count
+	}
+	return power
+}
+
+func sumOfPower(games []game) int {
+	sum := 0
+	for _, g := range games {
+		sum += g.powerOfFewestPossibleCubes()
+	}
+	return sum
+}
+
 func sumOfPossibleGames(games []game, d drawnSet) int {
 	sum := 0
 	for _, g := range games {
 		allPossible := true
 		for _, s := range g.drawnSets {
-			if !s.isPossibleWithDrawnCubes(d) {
+			if !s.hasAtMost(d) {
 				allPossible = false
 				break
 			}
@@ -78,11 +104,11 @@ func sumOfPossibleGames(games []game, d drawnSet) int {
 
 type drawnSet []drawnCubes
 
-func (s drawnSet) isPossibleWithDrawnCubes(o drawnSet) bool {
+func (s drawnSet) hasAtMost(maxCubes drawnSet) bool {
 	for _, c := range s {
-		for _, d := range o {
-			if c.color == d.color {
-				if d.count <= c.count {
+		for _, max := range maxCubes {
+			if c.color == max.color {
+				if c.count > max.count {
 					return false
 				}
 				break
