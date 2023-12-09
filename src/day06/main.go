@@ -73,7 +73,7 @@ func (c contest) rangeBeatingRecord() int {
 	// But this is fast enough so once again, leaving it.
 	for i := 1; i < c.time; i++ {
 		distance := i * (c.time - i)
-		if distance >= c.recordDistance {
+		if distance > c.recordDistance {
 			count++
 		}
 	}
